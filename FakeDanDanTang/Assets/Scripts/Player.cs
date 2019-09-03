@@ -26,4 +26,19 @@ public class Player : MonoBehaviour
             m_Rigidbody2D.AddForce(new Vector2(0f, m_JumpForce));
         }
     }
+
+    void OnCollisionEnter2D(Collision2D collision)
+    {
+        Debug.Log("Player Collide Enter " + collision.gameObject.name);
+    }
+
+    void OnCollisionStay2D(Collision2D collision)
+    {
+        Debug.Log("Player Collide Stay " + collision.gameObject.name);
+    }
+
+    void OnCollisionExit2D(Collision2D collision)
+    {
+        Debug.Log("Player Collide Exit " + collision.gameObject.name);
+    }
 }

@@ -29,24 +29,41 @@ public class Map : MonoBehaviour
 
     void OnCollisionEnter2D(Collision2D collision)
     {
+        if (!collision.gameObject.CompareTag("GameController"))
+        {
+            return;
+        }
+
         Vector2 collideWorldPos = collision.GetContact(0).point;
         Vector2 collidePoint = transform.InverseTransformPoint(collideWorldPos);
 
         m_ClipPaths[0].Clear();
-        int x = (int)((collidePoint.x - 0.5f) * m_ColliderPointScale);
-        int y = (int)((collidePoint.y + 0.5f) * m_ColliderPointScale);
+        int x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
+        int y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
         m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.5f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y + 0.5f) * m_ColliderPointScale);
+        x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
         m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.5f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.5f) * m_ColliderPointScale);
+        x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
         m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x - 0.5f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.5f) * m_ColliderPointScale);
+        x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
+        m_ClipPaths[0].Add(new IntPoint(x, y));
+        x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
+        m_ClipPaths[0].Add(new IntPoint(x, y));
+        x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
+        m_ClipPaths[0].Add(new IntPoint(x, y));
+        x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
+        m_ClipPaths[0].Add(new IntPoint(x, y));
+        x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
+        y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
         m_ClipPaths[0].Add(new IntPoint(x, y));
 
-        for(int i = m_ColliderPaths.Count; i < m_Collider2D.pathCount; i++)
+        for (int i = m_ColliderPaths.Count; i < m_Collider2D.pathCount; i++)
         {
             m_ColliderPaths.Add(new Path());
         }
@@ -72,7 +89,7 @@ public class Map : MonoBehaviour
         Clipper c = new Clipper();
         c.AddPaths(m_ColliderPaths, PolyType.ptSubject, true);
         c.AddPaths(m_ClipPaths, PolyType.ptClip, true);
-        c.Execute(ClipType.ctDifference, result, PolyFillType.pftEvenOdd, PolyFillType.pftNonZero);
+        c.Execute(ClipType.ctDifference, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
 
         m_Collider2D.pathCount = result.Count;
         for(int n = 0; n < result.Count; n++)
@@ -88,5 +105,6 @@ public class Map : MonoBehaviour
         }
 
         Instantiate(maskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
+        Destroy(collision.gameObject);
     }
 }

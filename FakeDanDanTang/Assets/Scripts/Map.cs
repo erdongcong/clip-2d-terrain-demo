@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 using ClipperLib;
+using System.Runtime.InteropServices;
 
 using Path = System.Collections.Generic.List<ClipperLib.IntPoint>;
 using Paths = System.Collections.Generic.List<System.Collections.Generic.List<ClipperLib.IntPoint>>;
@@ -14,6 +15,9 @@ public class Map : MonoBehaviour
     private Paths m_ColliderPaths;
 
     private float m_ColliderPointScale = 1000.0f;
+
+    [DllImport("tri")]
+    private static extern int triangulate_polygon(int ncontours, int[] cntr, double[,] vertices, int[,] triangles);
 
 
     private void Awake()
@@ -106,5 +110,16 @@ public class Map : MonoBehaviour
 
         Instantiate(maskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
         Destroy(collision.gameObject);
+
+        //int[] a = { 4 };
+        //double[,] b = { { 0.0, 0.0 }, { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } };
+        //int[,] d = new int[100, 3];
+        //triangulate_polygon(1, a, b, d);
+
+        //Debug.Log(1);
+        c.Execute(ClipType.ctIntersection, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+        for(int o = 0; o < result.Count; o++)
+        {
+        }
     }
 }

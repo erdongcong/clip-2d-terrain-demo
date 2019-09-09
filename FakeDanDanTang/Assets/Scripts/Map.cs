@@ -9,6 +9,7 @@ using Paths = System.Collections.Generic.List<System.Collections.Generic.List<Cl
 public class Map : MonoBehaviour
 {
     public GameObject maskPrefab;
+    public GameObject meshMaskPrefab;
 
     private PolygonCollider2D m_Collider2D;
     private Paths m_ClipPaths;
@@ -108,11 +109,11 @@ public class Map : MonoBehaviour
             m_Collider2D.SetPath(n, colliderPath.ToArray());
         }
 
-        Instantiate(maskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
+        //Instantiate(maskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
         Destroy(collision.gameObject);
 
         //int[] a = { 4 };
-        //double[,] b = { { 0.0, 0.0 }, { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } };
+        //double[,] b = { { 0.0, 0.0 }, { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } }; // b[0, 0] and b[0, 1] no use
         //int[,] d = new int[100, 3];
         //triangulate_polygon(1, a, b, d);
 
@@ -120,6 +121,58 @@ public class Map : MonoBehaviour
         c.Execute(ClipType.ctIntersection, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
         for(int o = 0; o < result.Count; o++)
         {
+            Path clipPath = result[o];
+            int[] vertexCounts = { clipPath.Count };
+            double[,] vertexs = new double[clipPath.Count + 1, 2];
+            // vertexs[0, 0] and vertexs[0, 1] no use
+            vertexs[0, 0] = 0.0;
+            vertexs[0, 1] = 0.0;
+
+            Vector3[] meshVertices = new Vector3[clipPath.Count];
+            Vector2[] UVs = new Vector2[clipPath.Count];
+
+            for (int p = 0; p < clipPath.Count; p++)
+            {
+                vertexs[p + 1, 0] = (double)clipPath[p].X / m_ColliderPointScale;
+                vertexs[p + 1, 1] = (double)clipPath[p].Y / m_ColliderPointScale;
+
+                meshVertices[p].x = (float)clipPath[p].X / m_ColliderPointScale;
+                meshVertices[p].y = (float)clipPath[p].Y / m_ColliderPointScale;
+                meshVertices[p].z = 0.0f;
+                meshVertices[p] = transform.TransformPoint(meshVertices[p]);
+                meshVertices[p].x -= collideWorldPos.x;
+                meshVertices[p].y -= collideWorldPos.y;
+
+                UVs[p].x = 0.0f;
+                UVs[p].y = 0.0f;
+            }
+            int[,] resultTriangles = new int[100, 3];
+            triangulate_polygon(1, vertexCounts, vertexs, resultTriangles);
+
+            int triangleCount = 0;
+            for(int index = 0; index < 100; index++)
+            {
+                if(resultTriangles[index, 0] == 0)
+                {
+                    triangleCount = index;
+                    break;
+                }
+            }
+            int[] triangles = new int[triangleCount * 3];
+            for(int q = 0; q < triangleCount; q++)
+            {
+                triangles[q * 3 + 2] = resultTriangles[q, 0] - 1;
+                triangles[q * 3 + 1] = resultTriangles[q, 1] - 1;
+                triangles[q * 3 + 0] = resultTriangles[q, 2] - 1;
+            }
+
+            Mesh mesh = new Mesh();
+            mesh.vertices = meshVertices;
+            mesh.uv = UVs;
+            mesh.triangles = triangles;
+
+            GameObject meshMask = Instantiate(meshMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, -1.0f), Quaternion.identity);
+            meshMask.GetComponent<MeshFilter>().mesh = mesh;
         }
     }
 }

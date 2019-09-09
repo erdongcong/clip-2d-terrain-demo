@@ -387,6 +387,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maskPrefab: {fileID: 3441801810670667160, guid: c0108289ac13d9242ac6126b8b035e91,
     type: 3}
+  meshMaskPrefab: {fileID: 5342021742065441029, guid: ef2b6d4bcf47c304fab96c2764cdf0d8,
+    type: 3}
 --- !u!1 &1123059527
 GameObject:
   m_ObjectHideFlags: 0

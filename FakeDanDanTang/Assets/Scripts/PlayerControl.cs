@@ -19,6 +19,13 @@ public class PlayerControl : MonoBehaviour
             // Read the jump input in Update so button presses aren't missed.
             m_Jump = Input.GetButtonDown("Jump");
         }
+
+        bool fire = Input.GetButtonDown("Fire1");
+        if (fire)
+        {
+            Debug.Log("Fire Input: " + Input.GetAxis("Fire1"));
+            m_Character.Fire();
+        }
     }
 
 
@@ -28,6 +35,10 @@ public class PlayerControl : MonoBehaviour
         float h = Input.GetAxis("Horizontal");
         // Pass all parameters to the character control script.
         m_Character.Move(h, m_Jump);
+
+        float v = Input.GetAxis("Vertical");
+        m_Character.Aim(v);
+
         m_Jump = false;
     }
 }

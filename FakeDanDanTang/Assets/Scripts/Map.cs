@@ -8,12 +8,16 @@ using Paths = System.Collections.Generic.List<System.Collections.Generic.List<Cl
 
 public class Map : MonoBehaviour
 {
-    public GameObject maskPrefab;
-    public GameObject meshMaskPrefab;
+    public bool oIsSpriteMask;
+
+    [SerializeField] private GameObject oMaskPrefab = null;
+    [SerializeField] private GameObject oMeshMaskPrefab = null;
+    [SerializeField] private GameObject oClipTpl = null;
 
     private PolygonCollider2D m_Collider2D;
     private Paths m_ClipPaths;
     private Paths m_ColliderPaths;
+    private Vector2[] m_ClipVertices;
 
     private float m_ColliderPointScale = 1000.0f;
 
@@ -30,6 +34,10 @@ public class Map : MonoBehaviour
         m_ClipPaths.Add(new Path());
 
         m_ColliderPaths = new Paths();
+
+        GameObject temp = Instantiate(oClipTpl);
+        m_ClipVertices = temp.GetComponent<PolygonCollider2D>().GetPath(0);
+        Destroy(temp);
     }
 
     void OnCollisionEnter2D(Collision2D collision)
@@ -43,49 +51,55 @@ public class Map : MonoBehaviour
         Vector2 collidePoint = transform.InverseTransformPoint(collideWorldPos);
 
         m_ClipPaths[0].Clear();
-        int x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
-        int y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
-        x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
-        y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
-        m_ClipPaths[0].Add(new IntPoint(x, y));
+        //int x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
+        //int y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x - 0.57f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x - 0.3f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y - 0.57f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y - 0.24f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x + 0.57f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y + 0.24f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        //x = (int)((collidePoint.x + 0.3f) * m_ColliderPointScale);
+        //y = (int)((collidePoint.y + 0.57f) * m_ColliderPointScale);
+        //m_ClipPaths[0].Add(new IntPoint(x, y));
+        for(int i = 0; i < m_ClipVertices.Length; i++)
+        {
+            int x = (int)((collidePoint.x - m_ClipVertices[i].x) * m_ColliderPointScale);
+            int y = (int)((collidePoint.y - m_ClipVertices[i].y) * m_ColliderPointScale);
+            m_ClipPaths[0].Add(new IntPoint(x, y));
+        }
 
         for (int i = m_ColliderPaths.Count; i < m_Collider2D.pathCount; i++)
         {
             m_ColliderPaths.Add(new Path());
         }
 
-        for(int j = 0; j < m_ColliderPaths.Count; j++)
+        for(int i = 0; i < m_ColliderPaths.Count; i++)
         {
-            m_ColliderPaths[j].Clear();
+            m_ColliderPaths[i].Clear();
         }
 
-        for(int k = 0; k < m_Collider2D.pathCount; k++)
+        for(int i = 0; i < m_Collider2D.pathCount; i++)
         {
-            Vector2[] path = m_Collider2D.GetPath(k);
-            Path clippedPath = m_ColliderPaths[k];
-            for(int m = 0; m < path.Length; m++)
+            Vector2[] path = m_Collider2D.GetPath(i);
+            Path clippedPath = m_ColliderPaths[i];
+            for(int j = 0; j < path.Length; j++)
             {
-                x = (int)(path[m].x * m_ColliderPointScale);
-                y = (int)(path[m].y * m_ColliderPointScale);
+                int x = (int)(path[j].x * m_ColliderPointScale);
+                int y = (int)(path[j].y * m_ColliderPointScale);
                 clippedPath.Add(new IntPoint(x, y));
             }
         }
@@ -97,82 +111,88 @@ public class Map : MonoBehaviour
         c.Execute(ClipType.ctDifference, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
 
         m_Collider2D.pathCount = result.Count;
-        for(int n = 0; n < result.Count; n++)
+        for(int i = 0; i < result.Count; i++)
         {
-            Path resultPath = result[n];
+            Path resultPath = result[i];
             List<Vector2> colliderPath = new List<Vector2>();
-            for (int l = 0; l < resultPath.Count; l++)
+            for (int j = 0; j < resultPath.Count; j++)
             {
-                colliderPath.Add(new Vector2((float)resultPath[l].X / m_ColliderPointScale, (float)resultPath[l].Y / m_ColliderPointScale));
-                //Debug.Log("新网格：( " + resultPath[l].X + ", " + resultPath[l].Y + " )");
+                colliderPath.Add(new Vector2((float)resultPath[j].X / m_ColliderPointScale, (float)resultPath[j].Y / m_ColliderPointScale));
+                //Debug.Log("新网格：( " + resultPath[j].X + ", " + resultPath[j].Y + " )");
             }
-            m_Collider2D.SetPath(n, colliderPath.ToArray());
+            m_Collider2D.SetPath(i, colliderPath.ToArray());
         }
 
-        //Instantiate(maskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
         Destroy(collision.gameObject);
 
-        //int[] a = { 4 };
-        //double[,] b = { { 0.0, 0.0 }, { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } }; // b[0, 0] and b[0, 1] no use
-        //int[,] d = new int[100, 3];
-        //triangulate_polygon(1, a, b, d);
-
-        //Debug.Log(1);
-        c.Execute(ClipType.ctIntersection, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
-        for(int o = 0; o < result.Count; o++)
+        if (oIsSpriteMask)
         {
-            Path clipPath = result[o];
-            int[] vertexCounts = { clipPath.Count };
-            double[,] vertexs = new double[clipPath.Count + 1, 2];
-            // vertexs[0, 0] and vertexs[0, 1] no use
-            vertexs[0, 0] = 0.0;
-            vertexs[0, 1] = 0.0;
+            Instantiate(oMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
+        }
+        else
+        {
+            //int[] a = { 4 };
+            //double[,] b = { { 0.0, 0.0 }, { 0.0, 0.0 }, { 1.0, 0.0 }, { 1.0, 1.0 }, { 0.0, 1.0 } }; // b[0, 0] and b[0, 1] no use
+            //int[,] d = new int[100, 3];
+            //triangulate_polygon(1, a, b, d);
 
-            Vector3[] meshVertices = new Vector3[clipPath.Count];
-            Vector2[] UVs = new Vector2[clipPath.Count];
-
-            for (int p = 0; p < clipPath.Count; p++)
+            //Debug.Log(1);
+            c.Execute(ClipType.ctIntersection, result, PolyFillType.pftNonZero, PolyFillType.pftNonZero);
+            for (int i = 0; i < result.Count; i++)
             {
-                vertexs[p + 1, 0] = (double)clipPath[p].X / m_ColliderPointScale;
-                vertexs[p + 1, 1] = (double)clipPath[p].Y / m_ColliderPointScale;
+                Path clipPath = result[i];
+                int[] vertexCounts = { clipPath.Count };
+                double[,] vertexs = new double[clipPath.Count + 1, 2];
+                // vertexs[0, 0] and vertexs[0, 1] no use
+                vertexs[0, 0] = 0.0;
+                vertexs[0, 1] = 0.0;
 
-                meshVertices[p].x = (float)clipPath[p].X / m_ColliderPointScale;
-                meshVertices[p].y = (float)clipPath[p].Y / m_ColliderPointScale;
-                meshVertices[p].z = 0.0f;
-                meshVertices[p] = transform.TransformPoint(meshVertices[p]);
-                meshVertices[p].x -= collideWorldPos.x;
-                meshVertices[p].y -= collideWorldPos.y;
+                Vector3[] meshVertices = new Vector3[clipPath.Count];
+                Vector2[] UVs = new Vector2[clipPath.Count];
 
-                UVs[p].x = 0.0f;
-                UVs[p].y = 0.0f;
-            }
-            int[,] resultTriangles = new int[100, 3];
-            triangulate_polygon(1, vertexCounts, vertexs, resultTriangles);
-
-            int triangleCount = 0;
-            for(int index = 0; index < 100; index++)
-            {
-                if(resultTriangles[index, 0] == 0)
+                for (int j = 0; j < clipPath.Count; j++)
                 {
-                    triangleCount = index;
-                    break;
+                    vertexs[j + 1, 0] = (double)clipPath[j].X / m_ColliderPointScale;
+                    vertexs[j + 1, 1] = (double)clipPath[j].Y / m_ColliderPointScale;
+
+                    meshVertices[j].x = (float)clipPath[j].X / m_ColliderPointScale;
+                    meshVertices[j].y = (float)clipPath[j].Y / m_ColliderPointScale;
+                    meshVertices[j].z = 0.0f;
+                    meshVertices[j] = transform.TransformPoint(meshVertices[j]);
+                    meshVertices[j].x -= collideWorldPos.x;
+                    meshVertices[j].y -= collideWorldPos.y;
+
+                    UVs[j].x = 0.0f;
+                    UVs[j].y = 0.0f;
                 }
-            }
-            int[] triangles = new int[triangleCount * 3];
-            for(int q = 0; q < triangleCount; q++)
-            {
-                triangles[q * 3 + 2] = resultTriangles[q, 0] - 1;
-                triangles[q * 3 + 1] = resultTriangles[q, 1] - 1;
-                triangles[q * 3 + 0] = resultTriangles[q, 2] - 1;
-            }
+                int[,] resultTriangles = new int[100, 3];
+                triangulate_polygon(1, vertexCounts, vertexs, resultTriangles);
 
-            Mesh mesh = new Mesh();
-            mesh.vertices = meshVertices;
-            mesh.uv = UVs;
-            mesh.triangles = triangles;
+                int triangleCount = 0;
+                for (int index = 0; index < 100; index++)
+                {
+                    if (resultTriangles[index, 0] == 0)
+                    {
+                        triangleCount = index;
+                        break;
+                    }
+                }
+                int[] triangles = new int[triangleCount * 3];
+                for (int j = 0; j < triangleCount; j++)
+                {
+                    triangles[j * 3 + 2] = resultTriangles[j, 0] - 1;
+                    triangles[j * 3 + 1] = resultTriangles[j, 1] - 1;
+                    triangles[j * 3 + 0] = resultTriangles[j, 2] - 1;
+                }
 
-            GameObject meshMask = Instantiate(meshMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, -1.0f), Quaternion.identity);
-            meshMask.GetComponent<MeshFilter>().mesh = mesh;
+                Mesh mesh = new Mesh();
+                mesh.vertices = meshVertices;
+                mesh.uv = UVs;
+                mesh.triangles = triangles;
+
+                GameObject meshMask = Instantiate(oMeshMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, -1.0f), Quaternion.identity);
+                meshMask.GetComponent<MeshFilter>().mesh = mesh;
+            }
         }
     }
 }

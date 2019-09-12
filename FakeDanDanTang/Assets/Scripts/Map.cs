@@ -20,6 +20,7 @@ public class Map : MonoBehaviour
     private Vector2[] m_ClipVertices;
 
     private float m_ColliderPointScale = 1000.0f;
+    private static float s_MeshMaskZ = 10.0f;
 
     [DllImport("tri")]
     private static extern int triangulate_polygon(int ncontours, int[] cntr, double[,] vertices, int[,] triangles);
@@ -157,7 +158,7 @@ public class Map : MonoBehaviour
 
                     meshVertices[j].x = (float)clipPath[j].X / m_ColliderPointScale;
                     meshVertices[j].y = (float)clipPath[j].Y / m_ColliderPointScale;
-                    meshVertices[j].z = 0.0f;
+                    meshVertices[j].z = s_MeshMaskZ;
                     meshVertices[j] = transform.TransformPoint(meshVertices[j]);
                     meshVertices[j].x -= collideWorldPos.x;
                     meshVertices[j].y -= collideWorldPos.y;
@@ -190,8 +191,10 @@ public class Map : MonoBehaviour
                 mesh.uv = UVs;
                 mesh.triangles = triangles;
 
-                GameObject meshMask = Instantiate(oMeshMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, -1.0f), Quaternion.identity);
+                GameObject meshMask = Instantiate(oMeshMaskPrefab, new Vector3(collideWorldPos.x, collideWorldPos.y, 0.0f), Quaternion.identity);
                 meshMask.GetComponent<MeshFilter>().mesh = mesh;
+
+                s_MeshMaskZ += 10.0f;
             }
         }
     }

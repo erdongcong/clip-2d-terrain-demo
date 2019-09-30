@@ -5,12 +5,13 @@ public class Player : MonoBehaviour
     [SerializeField] private float m_MaxSpeed = 10f;                    // The fastest the player can travel in the x axis.
     [SerializeField] private float m_JumpForce = 400f;                  // Amount of force added when the player jumps.
     [SerializeField] private float o_RotateSpeed = 5.0f;
+    [SerializeField] private float o_MaxPowerAccumulationTime = 3.0f;
+    [SerializeField] private float o_MaxFireForce = 500.0f;
     [SerializeField] private GameObject o_ShellPrefab = null;
     [SerializeField] private Transform o_GunBarrelTrans = null;
     [SerializeField] private Transform o_ShellSpawnTrans = null;
 
     private Rigidbody2D m_Rigidbody2D;
-    private float m_FireForce = 1000.0f;
     private bool m_IsFaceTheRight = true;
 
 
@@ -39,10 +40,11 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void Fire()
+    public void Fire(float accTime)
     {
+        float force = (accTime > o_MaxPowerAccumulationTime ? 1.0f : accTime / o_MaxPowerAccumulationTime) * o_MaxFireForce;
         float fireDir = (m_IsFaceTheRight ? o_GunBarrelTrans.localRotation.eulerAngles.z : 180 - o_GunBarrelTrans.localRotation.eulerAngles.z) * Mathf.Deg2Rad;
-        Instantiate(o_ShellPrefab, o_ShellSpawnTrans.position, Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Mathf.Cos(fireDir) * m_FireForce, Mathf.Sin(fireDir) * m_FireForce));
+        Instantiate(o_ShellPrefab, o_ShellSpawnTrans.position, Quaternion.identity).GetComponent<Rigidbody2D>().AddForce(new Vector2(Mathf.Cos(fireDir) * force, Mathf.Sin(fireDir) * force));
     }
 
     public void Aim(float rotate)

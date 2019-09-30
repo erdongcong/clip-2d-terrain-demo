@@ -4,6 +4,7 @@ public class PlayerControl : MonoBehaviour
 {
     private Player m_Character;
     private bool m_Jump;
+    private float m_PowerAccumulationTime = 0.0f;
 
 
     private void Awake()
@@ -20,11 +21,16 @@ public class PlayerControl : MonoBehaviour
             m_Jump = Input.GetButtonDown("Jump");
         }
 
-        bool fire = Input.GetButtonDown("Fire1");
+        if (Input.GetAxis("Fire1") > 0.00001f)
+        {
+            m_PowerAccumulationTime += Time.deltaTime;
+        }
+
+        bool fire = Input.GetButtonUp("Fire1");
         if (fire)
         {
-            Debug.Log("Fire Input: " + Input.GetAxis("Fire1"));
-            m_Character.Fire();
+            m_Character.Fire(m_PowerAccumulationTime);
+            m_PowerAccumulationTime = 0.0f;
         }
     }
 

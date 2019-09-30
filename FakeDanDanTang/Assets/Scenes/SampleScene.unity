@@ -352,7 +352,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1019401811}
   - component: {fileID: 1019401809}
-  - component: {fileID: 1019401812}
+  - component: {fileID: 1019401810}
   m_Layer: 0
   m_Name: Map
   m_TagString: Untagged
@@ -389,6 +389,27 @@ PolygonCollider2D:
       - {x: 10, y: 2.5}
       - {x: 10, y: -2.5}
       - {x: -10, y: -2.5}
+--- !u!114 &1019401810
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1019401808}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: fd73f5bc14094a346a1ecb9e4549562a, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  oMaskPrefab: {fileID: 3441801810670667160, guid: c0108289ac13d9242ac6126b8b035e91,
+    type: 3}
+  oMeshMaskPrefab: {fileID: 5342021742065441029, guid: ef2b6d4bcf47c304fab96c2764cdf0d8,
+    type: 3}
+  oSpriteMaskPrefab: {fileID: 1149440985270484610, guid: 2c09ecedf546bfb47843d3d0a98e4977,
+    type: 3}
+  oClipTpl: {fileID: 7751954548949580895, guid: 3f8c385dc51703a4883bd6b13af80a34,
+    type: 3}
+  oMaskType: 2
 --- !u!4 &1019401811
 Transform:
   m_ObjectHideFlags: 0
@@ -404,25 +425,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1019401812
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1019401808}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: fd73f5bc14094a346a1ecb9e4549562a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  oIsSpriteMask: 0
-  oMaskPrefab: {fileID: 3441801810670667160, guid: c0108289ac13d9242ac6126b8b035e91,
-    type: 3}
-  oMeshMaskPrefab: {fileID: 5342021742065441029, guid: ef2b6d4bcf47c304fab96c2764cdf0d8,
-    type: 3}
-  oClipTpl: {fileID: 7751954548949580895, guid: 3f8c385dc51703a4883bd6b13af80a34,
-    type: 3}
 --- !u!1 &1123059527
 GameObject:
   m_ObjectHideFlags: 0
@@ -709,6 +711,8 @@ MonoBehaviour:
   m_MaxSpeed: 10
   m_JumpForce: 400
   o_RotateSpeed: 5
+  o_MaxPowerAccumulationTime: 3
+  o_MaxFireForce: 500
   o_ShellPrefab: {fileID: 6035612988942594409, guid: 175fc23a641d4b94c8f85e5b93592ccb,
     type: 3}
   o_GunBarrelTrans: {fileID: 1437492410}
